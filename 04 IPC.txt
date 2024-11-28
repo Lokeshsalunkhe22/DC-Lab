@@ -1,0 +1,47 @@
+#Client
+
+import socket
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect(('localhost', 6666))
+
+x = int(input("Enter 1st No: "))
+y = int(input("Enter 2nd No: "))
+
+client_socket.sendall(x.to_bytes(4, byteorder='big'))
+client_socket.sendall(y.to_bytes(4, byteorder='big'))
+
+client_socket.close()
+
+
+
+
+
+
+
+
+#Server
+
+
+import socket
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind(('localhost', 6666))
+server_socket.listen(1)
+print("Server Started")
+
+while True:
+    client_socket, addr = server_socket.accept()
+    print(f"Connection from {addr} has been established.")
+
+    try:
+        a = int.from_bytes(client_socket.recv(4), byteorder='big')
+        b = int.from_bytes(client_socket.recv(4), byteorder='big')
+        print("Sum:", a + b)
+    except (ValueError, IndexError) as e:
+        print("Error receiving data:", e)
+
+    client_socket.close()
+
+
+
